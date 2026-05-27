@@ -13,6 +13,8 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
     List<MenuItem> findByPriceLessThan(Double price);
 
     List<MenuItem> findByNameContainingIgnoreCase(String name);
+    List<MenuItem> findByOrderByPriceDesc();
+    List<MenuItem> findByOrderByPriceAsc();
 
     boolean existsByName(String name);
 }

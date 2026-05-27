@@ -18,6 +18,7 @@ public class MenuItemRequest {
     @NotBlank(message = "Kategori boş olamaz")
     private String category;
 
+
     private boolean available = true;
 
     public String getName() { return name; }

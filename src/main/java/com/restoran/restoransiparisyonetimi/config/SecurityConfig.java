@@ -3,11 +3,9 @@ package com.restoran.restoransiparisyonetimi.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,28 +28,30 @@ public class SecurityConfig {
                         .frameOptions(frameOptions -> frameOptions.sameOrigin())
                 )
 
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/h2-console/**").permitAll()
-
+                        .requestMatchers("/login", "/h2-console/**").permitAll()
+                        .requestMatchers("/", "/menu", "/orders").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/menu-items/**").permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAnyRole("CUSTOMER", "ADMIN")
-
+                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAnyRole("CUSTOMER", "ADMIN","WAITER")
                         .requestMatchers(HttpMethod.PATCH, "/api/orders/**").hasAnyRole("WAITER", "ADMIN")
-
                         .requestMatchers(HttpMethod.POST, "/api/menu-items").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/menu-items/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/menu-items/**").hasAnyRole("ADMIN","WAITER")
                         .requestMatchers(HttpMethod.DELETE, "/api/menu-items/**").hasRole("ADMIN")
-
                         .anyRequest().authenticated()
                 )
 
-                .httpBasic(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll()
+                )
+
+                .httpBasic(httpBasic -> {})
+
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                )
 
                 .build();
     }
@@ -61,19 +61,19 @@ public class SecurityConfig {
 
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder.encode("admin123"))
+                .password(passwordEncoder.encode("1214"))
                 .roles("ADMIN")
                 .build();
 
         UserDetails waiter = User.builder()
                 .username("garson")
-                .password(passwordEncoder.encode("garson123"))
+                .password(passwordEncoder.encode("1214"))
                 .roles("WAITER")
                 .build();
 
         UserDetails customer = User.builder()
                 .username("musteri")
-                .password(passwordEncoder.encode("musteri123"))
+                .password(passwordEncoder.encode("1214"))
                 .roles("CUSTOMER")
                 .build();
 

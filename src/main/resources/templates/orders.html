@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GastroGusto - Sipariş Operasyon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .premium-glow {
+            box-shadow: 0 20px 40px -15px rgba(139, 90, 43, 0.12);
+        }
+        .premium-glow:hover {
+            box-shadow: 0 25px 50px -12px rgba(184, 134, 11, 0.18);
+        }
+    </style>
+</head>
+<body class="bg-[#F9F6F0] text-slate-800 flex h-screen overflow-hidden">
+
+<aside class="w-64 bg-[#111625] text-white flex flex-col justify-between shadow-2xl flex-shrink-0 z-10 border-r border-[#1e2638]">
+    <div>
+        <div class="p-6 border-b border-[#1e2638] flex items-center gap-3 bg-[#0b0e19]">
+            <span class="text-2xl filter drop-shadow-[0_2px_8px_rgba(184,134,11,0.5)]">🍳</span>
+            <div>
+                <h1 class="font-extrabold text-lg leading-tight tracking-wider bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent">GastroGusto</h1>
+            </div>
+        </div>
+        <nav class="p-4 space-y-2.5">
+
+            <a href="/menu" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#1c2336] hover:text-amber-200 rounded-2xl font-medium transition-all duration-200 group">
+                <span class="opacity-70 group-hover:scale-110 transition-transform">🍔</span> Menü Yönetimi
+            </a>
+            <a href="/orders" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#1c2336] hover:text-amber-200 rounded-2xl font-medium transition-all duration-200 group">
+                <span class="opacity-70 group-hover:scale-110 transition-transform">📋</span> Siparişler
+            </a>
+            <a href="/reports" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#1c2336] hover:text-amber-200 rounded-2xl font-medium transition-all duration-200 group">
+                <span class="opacity-70 group-hover:scale-110 transition-transform">📈</span> Raporlar
+            </a>
+        </nav>
+    </div>
+    <div class="p-4 border-t border-[#1e2638] bg-[#0b0e19]/60">
+        <div class="flex items-center justify-between mb-2 px-2">
+            <div class="flex flex-col">
+                <span class="text-sm font-bold text-slate-200 tracking-wide">Ayşe Hancıoğulları</span>
+                <span class="text-[11px] text-amber-500 font-semibold uppercase tracking-wider">Yönetici</span>
+            </div>
+            <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></span>
+        </div>
+        <a href="/logout" class="flex items-center justify-center gap-2 w-full py-2.5 bg-[#161c2e] hover:bg-rose-950/30 hover:text-rose-400 text-slate-400 rounded-xl text-xs font-bold transition-all duration-200 mt-2 border border-[#1e2638] hover:border-rose-900/40">
+            <span>🚪</span> Sistemden Çıkış
+        </a>
+    </div>
+</aside>
+
+<main class="flex-1 flex flex-col overflow-hidden bg-[#F6F3EB]">
+    <header class="h-20 bg-white/80 backdrop-blur-md border-b border-[#e6e1d6] flex items-center justify-between px-10 shadow-sm z-5 flex-shrink-0">
+        <h2 class="text-2xl font-black text-[#2C221E] tracking-tight">Sipariş Operasyon Ekranı</h2>
+        <div class="flex gap-3">
+            <span class="px-4 py-2 bg-[#E1F0FA] text-[#2B6CB0] text-xs font-extrabold rounded-2xl border border-[#BEE3F8] shadow-sm tracking-wider uppercase">Mutfak Aktif</span>
+            <span class="px-4 py-2 bg-[#E6FFFA] text-[#234E52] text-xs font-extrabold rounded-2xl border border-[#B2F5EA] shadow-sm tracking-wider uppercase">Kasa Açık</span>
+        </div>
+    </header>
+
+    <section class="flex-1 overflow-y-auto p-10 flex flex-col lg:flex-row gap-8 items-start">
+
+        <div class="w-full lg:w-1/3 bg-[#FDFBF7] p-8 rounded-3xl border border-[#EADBCE] h-fit premium-glow transform hover:scale-[1.01] transition-all duration-300 flex-shrink-0">
+            <h3 class="text-lg font-black text-[#3A2E2B] mb-6 flex items-center gap-2.5 border-b border-[#F2EDE2] pb-4">
+                <span class="text-lg p-2 bg-[#F5EFE4] text-[#8B5A2B] rounded-xl shadow-inner">➕</span> Sipariş Girişi
+            </h3>
+            <form id="orderForm" class="space-y-5">
+                <div>
+                    <label class="block text-[10px] font-black text-[#8B7E74] uppercase tracking-widest mb-2 px-1">Müşteri Adı / Masa No</label>
+                    <input type="text" id="customerName" required placeholder="Örn: Masa 5 veya Meryem Çiftçi"
+                           class="w-full px-4 py-3 rounded-2xl border border-[#DFD7CD] focus:outline-none focus:ring-2 focus:ring-[#9A6735] focus:border-transparent transition-all text-sm bg-white font-medium text-slate-700 placeholder-slate-400 shadow-sm" />
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-[#8B7E74] uppercase tracking-widest mb-2 px-1">Menüden Ürün Seçin</label>
+                    <select id="productSelect" required
+                            class="w-full px-4 py-3 rounded-2xl border border-[#DFD7CD] focus:outline-none focus:ring-2 focus:ring-[#9A6735] focus:border-transparent transition-all text-sm bg-white font-bold text-slate-700 cursor-pointer shadow-sm">
+                        <option value="" disabled selected>Lütfen bir lezzet seçin</option>
+                        <option th:each="item : ${menuItems}" th:value="${item.id}" th:data-price="${item.price}" th:text="${item.name} + ' (₺' + ${item.price} + ')'"></option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-[#8B7E74] uppercase tracking-widest mb-2 px-1">Adet</label>
+                    <input type="number" id="productQuantity" min="1" value="1" required
+                           class="w-full px-4 py-3 rounded-2xl border border-[#DFD7CD] focus:outline-none focus:ring-2 focus:ring-[#9A6735] focus:border-transparent transition-all text-sm bg-white font-black text-[#8B5A2B] shadow-sm" />
+                </div>
+                <button type="submit"
+                        class="w-full bg-gradient-to-r from-[#8B5A2B] to-[#B8860B] hover:from-[#734A22] hover:to-[#A0750A] text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-[#8B5A2B]/20 transform active:scale-[0.98] hover:scale-[1.02] transition-all text-sm tracking-wider uppercase">
+                    Siparişi Mutfağa Gönder
+                </button>
+            </form>
+        </div>
+
+        <div class="w-full lg:flex-1 bg-[#FDFBF7] rounded-3xl border border-[#EADBCE] overflow-hidden flex flex-col premium-glow transform hover:scale-[1.002] transition-all duration-300">
+            <div class="p-6 border-b border-[#F2EDE2] bg-white/50 px-8 py-5 flex items-center justify-between flex-shrink-0">
+                <h3 class="text-base font-black text-[#3A2E2B] flex items-center gap-2">
+                    <span class="text-lg p-2 bg-[#F5EFE4] text-[#8B5A2B] rounded-xl shadow-inner">📋</span> Aktif Siparişler
+                </h3>
+                <button onclick="window.location.reload()" class="px-4 py-2 bg-white hover:bg-[#F5EFE4] text-[#8B5A2B] rounded-xl text-xs font-bold border border-[#DFD5C3] shadow-sm transition-all">🔄 Ekranı Yenile</button>
+            </div>
+            <div class="overflow-x-auto w-full">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                    <tr class="bg-[#FBF9F4] text-[#A19489] uppercase text-[10px] font-black tracking-widest border-b border-[#F2EDE2]">
+                        <th class="py-4 px-4 w-12 text-center">NO</th>
+                        <th class="py-4 px-4">MÜŞTERİ / MASA</th>
+                        <th class="py-4 px-4">SİPARİŞ EDİLEN LEZZET</th>
+                        <th class="py-4 px-4 text-center">ADET</th>
+                        <th class="py-4 px-4 text-center">DURUM</th>
+                        <th class="py-4 px-4 text-right">TOPLAM TUTAR</th>
+                        <th class="py-4 px-6 text-center">İŞLEM</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#F2EDE2] text-sm">
+                    <tr th:each="order : ${orders}" class="hover:bg-[#FDFCF9] transition-all duration-150 group">
+                        <td class="py-5 px-4 font-bold text-slate-400 text-center text-xs" th:text="${order.id}">1</td>
+                        <td class="py-5 px-4 font-black text-[#3A2E2B] group-hover:text-[#8B5A2B] transition-colors" th:text="${order.customerName}">Masa 4</td>
+                        <td class="py-5 px-4 font-semibold text-slate-600" th:text="${order.menuItem != null ? order.menuItem.name : '-'}">Adana Kebap</td>
+                        <td class="py-5 px-4 text-center font-black text-slate-700 text-base" th:text="${order.quantity}">1</td>
+                        <td class="py-5 px-4 text-center">
+                            <span th:text="${order.status}"
+                                  th:classappend="${order.status == 'READY'} ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-sm' : (${order.status == 'PREPARING'} ? 'bg-sky-50 text-sky-700 border border-sky-200/60 animate-pulse' : 'bg-amber-50 text-amber-700 border border-amber-200/60')"
+                                  class="px-3 py-1.5 text-[10px] font-black rounded-full tracking-wider inline-block uppercase">PENDING</span>
+                        </td>
+                        <td class="py-5 px-4 text-right font-black text-[#2C221E] text-base tracking-tight" th:text="${order.totalPrice != null ? '₺' + #numbers.formatDecimal(order.totalPrice, 1, 2) : '₺0.00'}">₺350.00</td>
+                        <td class="py-5 px-6 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button th:attr="data-id=${order.id},data-status=${order.status}"
+                                        onclick="updateStatus(this.getAttribute('data-id'), this.getAttribute('data-status'))"
+                                        class="px-2.5 py-1.5 bg-amber-50 hover:bg-[#8B5A2B] text-[#8B5A2B] hover:text-white rounded-xl border border-[#EADBCE] hover:scale-105 active:scale-95 shadow-sm font-bold text-xs transition-all duration-150 whitespace-nowrap">
+                                    👨‍🍳 Hazırla
+                                </button>
+                                <button th:attr="data-id=${order.id}"
+                                        onclick="deleteOrder(this.getAttribute('data-id'))"
+                                        class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-xl border border-rose-100 hover:scale-105 active:scale-95 shadow-sm font-bold text-xs transition-all duration-150 whitespace-nowrap">
+                                    🗑️ İptal
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="7" class="py-24 text-center text-slate-400 bg-white">
+                            <span class="text-5xl block mb-3 opacity-60">📋</span>
+                            <span class="text-sm font-bold text-slate-500 block tracking-wide">Şu anda sistemde aktif veya geçmiş bir sipariş kaydı bulunmuyor.</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const AUTH = 'Basic ' + btoa('admin:admin123');
+
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const selectElement = document.getElementById('productSelect');
+        if (!selectElement.value) { alert("Lütfen bir ürün seçin!"); return; }
+        const orderData = {
+            customerName: document.getElementById('customerName').value,
+            menuItemId: parseInt(selectElement.value),
+            quantity: parseInt(document.getElementById('productQuantity').value)
+        };
+        fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': AUTH },
+            body: JSON.stringify(orderData)
+        }).then(res => {
+            if (res.ok) { window.location.reload(); }
+            else { alert('Sipariş oluşturulamadı! Status: ' + res.status); }
+        });
+    });
+
+    function updateStatus(id, currentStatus) {
+        const next = currentStatus === 'PENDING' ? 'PREPARING' : 'READY';
+        if (confirm(id + ' numaralı sipariş ' + next + ' yapılsın mı?')) {
+            fetch('/api/orders/' + id + '/status?newStatus=' + next, {
+                method: 'PATCH',
+                headers: { 'Authorization': AUTH }
+            }).then(res => { if (res.ok) window.location.reload(); else alert('Güncelleme başarısız!'); });
+        }
+    }
+
+    function deleteOrder(id) {
+        if (confirm(id + ' numaralı siparişi iptal etmek istiyor musunuz?')) {
+            fetch('/api/orders/' + id, {
+                method: 'DELETE',
+                headers: { 'Authorization': AUTH }
+            }).then(res => { if (res.ok || res.status === 204) window.location.reload(); else alert('Sadece PENDING siparişler iptal edilebilir!'); });
+        }
+    }
+</script>
+</body>
+</html>

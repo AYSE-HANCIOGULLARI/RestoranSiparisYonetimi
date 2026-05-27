@@ -5,11 +5,13 @@ import com.restoran.restoransiparisyonetimi.entity.MenuItem;
 import com.restoran.restoransiparisyonetimi.repository.MenuItemRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class MenuItemService {
 
     private final MenuItemRepository menuItemRepository;
@@ -18,31 +20,29 @@ public class MenuItemService {
         this.menuItemRepository = menuItemRepository;
     }
 
-    // Tüm menüyü getir
+    @Transactional(readOnly = true)
     public List<MenuItem> getAllMenuItems() {
         return menuItemRepository.findAll();
     }
 
-    // ID ile tek ürün getir
+    @Transactional(readOnly = true)
     public MenuItem getMenuItemById(Long id) {
         return menuItemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Menü ürünü bulunamadı: " + id));
     }
 
-    // Kategoriye göre filtrele
+    @Transactional(readOnly = true)
     public List<MenuItem> getByCategory(String category) {
         return menuItemRepository.findByCategory(category);
     }
 
-    // Sadece müsait olanları getir
+    @Transactional(readOnly = true)
     public List<MenuItem> getAvailableItems() {
         return menuItemRepository.findByAvailable(true);
     }
 
-    // Yeni ürün ekle
     public MenuItem createMenuItem(MenuItemRequest request) {
-        // Aynı isimde ürün var mı kontrol et
         if (menuItemRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Bu isimde ürün zaten mevcut: " + request.getName());
@@ -53,26 +53,22 @@ public class MenuItemService {
         item.setDescription(request.getDescription());
         item.setPrice(request.getPrice());
         item.setCategory(request.getCategory());
-        item.setAvailable(true); // Yeni ürün varsayılan olarak müsait
+        item.setAvailable(true);
 
         return menuItemRepository.save(item);
     }
 
-    // Ürün güncelle
     public MenuItem updateMenuItem(Long id, MenuItemRequest request) {
-        MenuItem item = getMenuItemById(id); // bulamazsa zaten 404 fırlatır
-
+        MenuItem item = getMenuItemById(id);
         item.setName(request.getName());
         item.setDescription(request.getDescription());
         item.setPrice(request.getPrice());
         item.setCategory(request.getCategory());
-
         return menuItemRepository.save(item);
     }
 
-    // Ürün sil
     public void deleteMenuItem(Long id) {
-        MenuItem item = getMenuItemById(id); // bulamazsa 404 fırlatır
+        MenuItem item = getMenuItemById(id);
         menuItemRepository.delete(item);
     }
 }

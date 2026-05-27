@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GastroGusto - Menü Yönetimi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        /* İnce lüks parıltı efekti */
+        .premium-glow {
+            box-shadow: 0 20px 40px -15px rgba(139, 90, 43, 0.12);
+        }
+        .premium-glow:hover {
+            box-shadow: 0 25px 50px -12px rgba(184, 134, 11, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-[#F9F6F0] text-slate-800 flex h-screen overflow-hidden">
+
+<aside class="w-64 bg-[#111625] text-white flex flex-col justify-between shadow-2xl flex-shrink-0 z-10 border-r border-[#1e2638]">
+    <div>
+        <div class="p-6 border-b border-[#1e2638] flex items-center gap-3 bg-[#0b0e19]">
+            <span class="text-2xl filter drop-shadow-[0_2px_8px_rgba(184,134,11,0.5)]">🍳</span>
+            <div>
+                <h1 class="font-extrabold text-lg leading-tight tracking-wider bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent">GastroGusto</h1>
+                <span class="text-[10px] text-amber-400/80 font-bold tracking-widest uppercase"></span>
+            </div>
+        </div>
+
+        <nav class="p-4 space-y-2.5">
+
+            <a href="/menu" class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#9A6735] to-[#C59B4E] text-white rounded-2xl font-bold transition-all shadow-lg shadow-[#9A6735]/25 border border-[#C59B4E]/20">
+                <span>🍔</span> Menü Yönetimi
+            </a>
+            <a href="/orders" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#1c2336] hover:text-amber-200 rounded-2xl font-medium transition-all duration-200 group">
+                <span class="opacity-70 group-hover:scale-110 transition-transform">📋</span> Siparişler
+            </a>
+            <a href="/reports" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#1c2336] hover:text-amber-200 rounded-2xl font-medium transition-all duration-200 group">
+                <span class="opacity-70 group-hover:scale-110 transition-transform">📈</span> Raporlar
+            </a>
+        </nav>
+    </div>
+
+    <div class="p-4 border-t border-[#1e2638] bg-[#0b0e19]/60">
+        <div class="flex items-center justify-between mb-2 px-2">
+            <div class="flex flex-col">
+                <span class="text-sm font-bold text-slate-200 tracking-wide">Ayşe Hancıoğulları</span>
+                <span class="text-[11px] text-amber-500 font-semibold uppercase tracking-wider">Yönetici</span>
+            </div>
+            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse shadow-lg shadow-emerald-500/50"></span>
+        </div>
+        <a href="/logout" class="flex items-center justify-center gap-2 w-full py-2.5 bg-[#161c2e] hover:bg-rose-950/30 hover:text-rose-400 text-slate-400 rounded-xl text-xs font-bold transition-all duration-200 mt-2 border border-[#1e2638] hover:border-rose-900/40">
+            <span>🚪</span> Sistemden Çıkış
+        </a>
+    </div>
+</aside>
+
+<main class="flex-1 flex flex-col overflow-hidden bg-[#F6F3EB]">
+
+    <header class="h-20 bg-white/80 backdrop-blur-md border-b border-[#e6e1d6] flex items-center justify-between px-10 shadow-sm z-5 flex-shrink-0">
+        <h2 class="text-2xl font-black text-[#2C221E] tracking-tight">Menü Kataloğu</h2>
+        <div class="text-xs font-extrabold bg-[#F5EFE4] text-[#8B5A2B] px-4 py-2 rounded-2xl border border-[#DFD5C3] tracking-wider uppercase shadow-sm" th:text="${#lists.size(menuItems)} + ' Aktif Ürün'">
+            0 Aktif Ürün
+        </div>
+    </header>
+
+    <section class="flex-1 overflow-y-auto p-10 flex flex-col lg:flex-row gap-10 items-start">
+
+        <div class="w-full lg:w-1/3 bg-[#FDFBF7] p-8 rounded-3xl border border-[#EADBCE] h-fit premium-glow transform hover:scale-[1.01] transition-all duration-300">
+            <h3 id="formTitle" class="text-lg font-black text-[#3A2E2B] mb-6 flex items-center gap-2.5 border-b border-[#F2EDE2] pb-4">
+                <span class="text-lg p-2 bg-[#F5EFE4] text-[#8B5A2B] rounded-xl shadow-inner">✨</span> Ürün Tanımlama
+            </h3>
+
+            <form id="menuForm" class="space-y-5">
+                <input type="hidden" id="productId" name="id" />
+                <div>
+                    <label class="block text-[10px] font-black text-[#8B7E74] uppercase tracking-widest mb-2 px-1">Ürün Adı</label>
+                    <input type="text" id="productName" name="name" required placeholder="Örn: Özel Soslu İskender"
+                           class="w-full px-4 py-3 rounded-2xl border border-[#DFD7CD] focus:outline-none focus:ring-2 focus:ring-[#9A6735] focus:border-transparent transition-all text-sm bg-white font-medium text-slate-700 placeholder-slate-400 shadow-sm" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-[#8B7E74] uppercase tracking-widest mb-2 px-1">Kategori</label>
+                        <select id="productCategory" name="category" required
+                                class="w-full px-4 py-3 rounded-2xl border border-[#DFD7CD] focus:outline-none focus:ring-2 focus:ring-[#9A6735] focus:border-transparent transition-all text-sm bg-white font-bold text-slate-700 cursor-pointer shadow-sm">
+                            <option value="Ana Yemek">Ana Yemek</option>
+                            <option value="İçecek">İçecek</option>
+                            <option value="Tatlı">Tatlı</option>
+                            <option value="Ara Sıcak">Ara Sıcak</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-[#8B7E74] uppercase tracking-widest mb-2 px-1">Fiyat (TL)</label>
+                        <input type="number" step="0.01" id="productPrice" name="price" required placeholder="0.00"
+                               class="w-full px-4 py-3 rounded-2xl border border-[#DFD7CD] focus:outline-none focus:ring-2 focus:ring-[#9A6735] focus:border-transparent transition-all text-sm bg-white font-black text-[#8B5A2B] shadow-sm" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-[#8B7E74] uppercase tracking-widest mb-2 px-1">Gurme Açıklama</label>
+                    <textarea id="productDescription" name="description" rows="3" placeholder="Malzemeler, pişme derecesi ve sunum detayları..."
+                              class="w-full px-4 py-3 rounded-2xl border border-[#DFD7CD] focus:outline-none focus:ring-2 focus:ring-[#9A6735] text-sm resize-none bg-white font-medium text-slate-600 placeholder-slate-400 shadow-sm"></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" id="submitBtn"
+                            class="flex-1 bg-gradient-to-r from-[#8B5A2B] to-[#B8860B] hover:from-[#734A22] hover:to-[#A0750A] text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-[#8B5A2B]/20 transform active:scale-[0.98] hover:scale-[1.02] transition-all text-sm tracking-wider uppercase">
+                        Kataloğa Kaydet
+                    </button>
+                    <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden bg-[#F2EDE2] hover:bg-[#EADBCE] text-[#5C504A] font-bold py-3.5 px-5 rounded-2xl transition-all text-sm">
+                        İptal
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="w-full lg:w-2/3 bg-[#FDFBF7] rounded-3xl border border-[#EADBCE] overflow-hidden flex flex-col premium-glow transform hover:scale-[1.002] transition-all duration-300">
+            <div class="p-6 border-b border-[#F2EDE2] bg-white/50 px-8 py-5 flex items-center justify-between">
+                <h3 class="text-base font-black text-[#3A2E2B] flex items-center gap-2">
+                    <span class="text-lg p-2 bg-[#F5EFE4] text-[#8B5A2B] rounded-xl shadow-inner">🍔</span> Restoran Aktif Menüsü
+                </h3>
+                <button onclick="window.location.reload()" class="px-4 py-2 bg-white hover:bg-[#F5EFE4] text-[#8B5A2B] rounded-xl text-xs font-bold border border-[#DFD5C3] shadow-sm transition-all">🔄 Listeyi Yenile</button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                    <tr class="bg-[#FBF9F4] text-[#A19489] uppercase text-[10px] font-black tracking-widest border-b border-[#F2EDE2]">
+                        <th class="py-4 px-8 w-16 text-center">KOD</th>
+                        <th class="py-4 px-6">GURME REÇETE</th>
+                        <th class="py-4 px-6 text-center">KATEGORİ</th>
+                        <th class="py-4 px-6 text-right">BİRİM FİYAT</th>
+                        <th class="py-4 px-8 text-center">YÖNETİM</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#F2EDE2] text-sm">
+                    <tr th:each="item : ${menuItems}" class="hover:bg-[#FDFCF9] transition-all duration-150 group">
+                        <td class="py-5 px-8 font-bold text-slate-400 text-center text-xs" th:text="${item.id}">1</td>
+                        <td class="py-5 px-6">
+                            <div class="space-y-0.5">
+                                <div class="font-black text-[#3A2E2B] text-base group-hover:text-[#8B5A2B] transition-colors" th:text="${item.name}">Kremalı Makarna</div>
+                                <div class="text-xs text-slate-400 font-medium max-w-sm leading-relaxed" th:text="${item.description}">krema, mantar, tavuk</div>
+                            </div>
+                        </td>
+                        <td class="py-5 px-6 text-center">
+                            <span class="px-3.5 py-1.5 bg-[#F5EFE4] text-[#8B5A2B] text-[10px] font-black rounded-full border border-[#EADBCE] inline-block uppercase tracking-wider" th:text="${item.category}">
+                                Ana Yemek
+                            </span>
+                        </td>
+                        <td class="py-5 px-6 text-right font-black text-[#2C221E] text-base tracking-tight" th:text="'₺' + ${#numbers.formatDecimal(item.price, 1, 2)}">₺150.00</td>
+                        <td class="py-5 px-8 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button th:onclick="prepareUpdate([[${item.id}]], [[${item.name}]], [[${item.category}]], [[${item.price}]], [[${item.description}]])"
+                                        class="px-3 py-2 bg-amber-50 hover:bg-[#8B5A2B] text-[#8B5A2B] hover:text-white rounded-xl border border-[#EADBCE] hover:scale-105 active:scale-95 shadow-sm font-bold text-xs flex items-center gap-1 transition-all duration-150">
+                                    <span>📝</span> Düzenle
+                                </button>
+                                <button th:onclick="'deleteItem(' + ${item.id} + ')'"
+                                        class="px-3 py-2 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-xl border border-rose-100 hover:scale-105 active:scale-95 shadow-sm font-bold text-xs flex items-center gap-1 transition-all duration-150">
+                                    <span>🗑️</span> Kaldır
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(menuItems)}">
+                        <td colspan="5" class="py-24 text-center text-slate-400 bg-white">
+                            <span class="text-5xl block mb-3 opacity-60">🍽️</span>
+                            <span class="text-sm font-bold text-slate-500 block tracking-wide">Menü kartı boş. Yeni lezzetler eklemeye hazırsınız!</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<script>
+    document.getElementById('menuForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('productId').value;
+        const data = {
+            name: document.getElementById('productName').value,
+            category: document.getElementById('productCategory').value,
+            price: parseFloat(document.getElementById('productPrice').value),
+            description: document.getElementById('productDescription').value
+        };
+
+        const url = id ? '/api/menu-items/' + id : '/api/menu-items';
+        const method = id ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => {
+            if(res.ok) {
+                window.location.reload();
+            } else {
+                alert("İşlem gerçekleştirilirken hata oluştu! Alanları kontrol edin.");
+            }
+        });
+    });
+
+    function prepareUpdate(id, name, category, price, description) {
+        document.getElementById('productId').value = id;
+        document.getElementById('productName').value = name;
+        document.getElementById('productCategory').value = category;
+        document.getElementById('productPrice').value = price;
+        document.getElementById('productDescription').value = description;
+
+        document.getElementById('formTitle').innerHTML = "<span class='text-xl p-2 bg-amber-50 text-[#8B5A2B] rounded-xl shadow-inner'>✨</span> Reçeteyi Güncelle";
+        document.getElementById('submitBtn').innerText = "Değişiklikleri Kaydet";
+        document.getElementById('submitBtn').className = "flex-1 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transform active:scale-[0.98] hover:scale-[1.02] transition-all text-sm tracking-wider uppercase";
+        document.getElementById('cancelBtn').classList.remove('hidden');
+    }
+
+    function resetForm() {
+        document.getElementById('productId').value = "";
+        document.getElementById('menuForm').reset();
+        document.getElementById('formTitle').innerHTML = "<span class='text-xl p-2 bg-[#F5EFE4] text-[#8B5A2B] rounded-xl shadow-inner'>✨</span> Ürün Tanımlama";
+        document.getElementById('submitBtn').innerText = "Kataloğa Kaydet";
+        document.getElementById('submitBtn').className = "flex-1 bg-gradient-to-r from-[#8B5A2B] to-[#B8860B] hover:from-[#734A22] hover:to-[#A0750A] text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-[#8B5A2B]/20 transform active:scale-[0.98] hover:scale-[1.02] transition-all text-sm tracking-wider uppercase";
+        document.getElementById('cancelBtn').classList.add('hidden');
+    }
+
+    function deleteItem(id) {
+        if(confirm("Bu ürünü menüden tamamen kaldırmak istediğinize emin misiniz?")) {
+            fetch('/api/menu-items/' + id, {
+                method: 'DELETE'
+            }).then(res => {
+                if(res.ok) {
+                    window.location.reload();
+                } else {
+                    alert("Silme işlemi başarısız oldu.");
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
