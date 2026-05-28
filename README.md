@@ -54,15 +54,6 @@ src/main/java/com/restoran/restoransiparisyonetimi/
 └── service/         → MenuItemService, OrderService
 ---
 
-## 👥 Kullanıcılar ve Roller
-
-| Kullanıcı Adı | Şifre | Rol | Yetki Alanı |
-|---|---|---|---|
-| admin | 1214 | ADMIN | Her şey |
-| garson | 1214 | WAITER , ADMIN | Sipariş durumu güncelleme |
-| musteri | 1214 | CUSTOMER , ADMIN , WAITER | Sipariş oluşturma |
-
----
 
 ## 🔍 Derived Query Methods
 
