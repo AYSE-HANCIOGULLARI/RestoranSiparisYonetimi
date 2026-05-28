@@ -4,7 +4,7 @@ Bu proje, modern bir restoranın menü yönetimini, anlık sipariş takibini ve 
 
 ---
 
-## 🚀 Özellikler
+## Özellikler
 
 - **Dinamik Menü Yönetimi:** Yeni yemekler eklenebilir, güncellenebilir ve listelenebilir.
 - **Anlık Sipariş Girişi:** Masalardan gelen siparişler sisteme anında işlenir.
