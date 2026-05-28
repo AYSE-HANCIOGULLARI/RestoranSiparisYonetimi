@@ -163,34 +163,40 @@ Metot:  POST
 URL:    http://localhost:8080/api/menu-items
 Auth:   Basic Auth → admin / 1214
 Body (raw JSON):
+
 {
 "name": "Margherita Pizza",
 "description": "Domates soslu, mozzarella peynirli",
 "price": 180.0,
 "category": "Pizza"
 }
+
 Beklenen cevap: 201 Created
 ### 2. Menüyü Listele (Herkese Açık)
 Metot:  GET
 URL:    http://localhost:8080/api/menu-items
 Auth:   Basic Auth → admin / 1214
 Beklenen cevap: 200 OK + ürün listesi
+
 ### 3. Sipariş Oluştur (ADMIN,CUSTOMER,WAITER)
 Metot:  POST
 URL:    http://localhost:8080/api/orders
 Auth:   Basic Auth → musteri / 1214
 Body (raw JSON):
+
 {
 "customerName": "Ahmet",
 "menuItemId": 1,
 "quantity": 2
 }
+
 Beklenen cevap: 201 Created
 ### 4. Sipariş Durumunu Güncelle ("WAITER", "ADMIN")
 Metot:  PATCH
 URL:    http://localhost:8080/api/orders/1/status?newStatus=PREPARING
 Auth:   Basic Auth → garson / 1214
 Beklenen cevap: 200 OK
+
 ### 5. Siparişi İptal Et (ADMIN)
 Metot:  DELETE
 URL:    http://localhost:8080/api/orders/1
